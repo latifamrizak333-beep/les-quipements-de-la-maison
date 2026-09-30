@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Les équipements de la maison</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, #fff7ed, #ffe4c4);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        color: #222;
+    }
+
+    .game {
+        width: 100%;
+        max-width: 850px;
+        background: white;
+        border-radius: 25px;
+        padding: 35px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        text-align: center;
+    }
+
+    h1 {
+        color: #e86f00;
+        font-size: 34px;
+        margin-bottom: 8px;
+    }
+
+    .subtitle {
+        font-size: 20px;
+        margin-bottom: 25px;
+        color: #555;
+    }
+
+    .progress {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 15px;
+        color: #e86f00;
+    }
+
+    .question {
+        font-size: 28px;
+        font-weight: bold;
+        margin: 25px 0;
+    }
+
+    .answers {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        margin-top: 25px;
+    }
+
+    button.answer {
+        border: 2px solid #e86f00;
+        background: white;
+        color: #222;
+        padding: 18px;
+        border-radius: 15px;
+        font-size: 20px;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    button.answer:hover {
+        background: #fff0df;
+        transform: scale(1.02);
+    }
+
+    button.correct {
+        background: #c8f7d2 !important;
+        border-color: #2e9d50 !important;
+    }
+
+    button.wrong {
+        background: #ffd1d1 !important;
+        border-color: #d33 !important;
+    }
+
+    .feedback {
+        font-size: 22px;
+        font-weight: bold;
+        margin: 20px 0;
+        min-height: 30px;
+    }
+
+    .next {
+        display: none;
+        background: #e86f00;
+        color: white;
+        border: none;
+        padding: 14px 30px;
+        border-radius: 12px;
+        font-size: 20px;
+        cursor: pointer;
+        margin: auto;
+    }
+
+    .next:hover {
+        background: #c95d00;
+    }
+
+    .result {
+        display: none;
+    }
+
+    .score {
+        font-size: 30px;
+        font-weight: bold;
+        color: #e86f00;
+        margin: 25px;
+    }
+
+    .restart {
+        background: #e86f00;
+        color: white;
+        border: none;
+        padding: 15px 35px;
+        border-radius: 12px;
+        font-size: 20px;
+        cursor: pointer;
+    }
+
+    @media (max-width: 600px) {
+        .game {
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 27px;
+        }
+
+        .question {
+            font-size: 23px;
+        }
+
+        .answers {
+            grid-template-columns: 1fr;
+        }
+
+        button.answer {
+            font-size: 18px;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="game">
+
+    <div id="quiz">
+
+        <h1>🏠 Les équipements de la maison</h1>
+
+        <div class="subtitle">
+            Choisis la bonne réponse !
+        </div>
+
+        <div class="progress" id="progress"></div>
+
+        <div class="question" id="question"></div>
+
+        <div class="answers" id="answers"></div>
+
+        <div class="feedback" id="feedback"></div>
+
+        <button class="next" id="next" onclick="nextQuestion()">
+            Question suivante →
+        </button>
+
+    </div>
+
+    <div class="result" id="result">
+
+        <h1>🎉 Bravo !</h1>
+
+        <div class="score" id="score"></div>
+
+        <p style="font-size:22px;">
+            Merci d'avoir joué !
+        </p>
+
+        <button class="restart" onclick="restartGame()">
+            🔄 Recommencer
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+
+const questions = [
+
+    {
+        question: "Je conserve les aliments au froid. Qui suis-je ?",
+        answers: [
+            "Un réfrigérateur",
+            "Un four",
+            "Un lavabo",
+            "Une douche"
+        ],
+        correct: "Un réfrigérateur"
+    },
+
+    {
+        question: "Je cuis les gâteaux et les plats. Qui suis-je ?",
+        answers: [
+            "Un four",
+            "Un téléviseur",
+            "Un évier",
+            "Une baignoire"
+        ],
+        correct: "Un four"
+    },
+
+    {
+        question: "Je sers à cuisiner sur le feu. Qui suis-je ?",
+        answers: [
+            "Une cuisinière",
+            "Un lave-vaisselle",
+            "Un climatiseur",
+            "Un lavabo"
+        ],
+        correct: "Une cuisinière"
+    },
+
+    {
+        question: "Je lave les assiettes et les verres automatiquement. Qui suis-je ?",
+        answers: [
+            "Un lave-vaisselle",
+            "Une machine à laver",
+            "Un réfrigérateur",
+            "Un micro-ondes"
+        ],
+        correct: "Un lave-vaisselle"
+    },
+
+    {
+        question: "Je lave les vêtements. Qui suis-je ?",
+        answers: [
+            "Une machine à laver",
+            "Une baignoire",
+            "Un four",
+            "Un évier"
+        ],
+        correct: "Une machine à laver"
+    },
+
+    {
+        question: "Je regarde des programmes et des films. Qui suis-je ?",
+        answers: [
+            "Un téléviseur",
+            "Un climatiseur",
+            "Un lavabo",
+            "Une cuisinière"
+        ],
+        correct: "Un téléviseur"
+    },
+
+    {
+        question: "Je refroidis la maison quand il fait chaud. Qui suis-je ?",
+        answers: [
+            "Un climatiseur",
+            "Un four",
+            "Un évier",
+            "Un réfrigérateur"
+        ],
+        correct: "Un climatiseur"
+    },
+
+    {
+        question: "Je prends une douche avec moi. Qui suis-je ?",
+        answers: [
+            "Une douche",
+            "Une baignoire",
+            "Un micro-ondes",
+            "Un lave-vaisselle"
+        ],
+        correct: "Une douche"
+    },
+
+    {
+        question: "Je prends un bain dans une grande cuve. Qui suis-je ?",
+        answers: [
+            "Une baignoire",
+            "Un lavabo",
+            "Un évier",
+            "Un four"
+        ],
+        correct: "Une baignoire"
+    },
+
+    {
+        question: "Je lave les légumes et la vaisselle dans la cuisine. Qui suis-je ?",
+        answers: [
+            "Un évier",
+            "Un lavabo",
+            "Une douche",
+            "Un téléviseur"
+        ],
+        correct: "Un évier"
+    },
+
+    {
+        question: "Je me trouve généralement dans la salle de bains. On se lave les mains avec moi. Qui suis-je ?",
+        answers: [
+            "Un lavabo",
+            "Un évier",
+            "Un four",
+            "Un climatiseur"
+        ],
+        correct: "Un lavabo"
+    },
+
+    {
+        question: "Je chauffe rapidement les aliments. Qui suis-je ?",
+        answers: [
+            "Un micro-ondes",
+            "Un réfrigérateur",
+            "Une machine à laver",
+            "Une baignoire"
+        ],
+        correct: "Un micro-ondes"
+    }
+
+];
+
+let currentQuestion = 0;
+let score = 0;
+
+const questionElement = document.getElementById("question");
+const answersElement = document.getElementById("answers");
+const feedbackElement = document.getElementById("feedback");
+const nextButton = document.getElementById("next");
+const progressElement = document.getElementById("progress");
+
+function showQuestion() {
+
+    const q = questions[currentQuestion];
+
+    progressElement.textContent =
+        "Question " + (currentQuestion + 1) +
+        " / " + questions.length;
+
+    questionElement.textContent = q.question;
+
+    answersElement.innerHTML = "";
+
+    feedbackElement.textContent = "";
+
+    nextButton.style.display = "none";
+
+    q.answers.forEach(answer => {
+
+        const button = document.createElement("button");
+
+        button.classList.add("answer");
+
+        button.textContent = answer;
+
+        button.onclick = () => checkAnswer(button, answer);
+
+        answersElement.appendChild(button);
+
+    });
+}
+
+function checkAnswer(button, answer) {
+
+    const correctAnswer = questions[currentQuestion].correct;
+
+    const buttons = document.querySelectorAll(".answer");
+
+    buttons.forEach(btn => {
+        btn.disabled = true;
+    });
+
+    if (answer === correctAnswer) {
+
+        button.classList.add("correct");
+
+        feedbackElement.textContent = "✅ Très bien !";
+
+        feedbackElement.style.color = "#2e9d50";
+
+        score++;
+
+    } else {
+
+        button.classList.add("wrong");
+
+        feedbackElement.textContent =
+            "❌ La bonne réponse est : " + correctAnswer;
+
+        feedbackElement.style.color = "#d33";
+
+        buttons.forEach(btn => {
+
+            if (btn.textContent === correctAnswer) {
+                btn.classList.add("correct");
+            }
+
+        });
+
+    }
+
+    nextButton.style.display = "block";
+}
+
+function nextQuestion() {
+
+    currentQuestion++;
+
+    if (currentQuestion < questions.length) {
+
+        showQuestion();
+
+    } else {
+
+        showResult();
+
+    }
+}
+
+function showResult() {
+
+    document.getElementById("quiz").style.display = "none";
+
+    document.getElementById("result").style.display = "block";
+
+    document.getElementById("score").textContent =
+        "Ton score : " + score + " / " + questions.length;
+}
+
+function restartGame() {
+
+    currentQuestion = 0;
+
+    score = 0;
+
+    document.getElementById("result").style.display = "none";
+
+    document.getElementById("quiz").style.display = "block";
+
+    showQuestion();
+}
+
+showQuestion();
+
+</script>
+
+</body>
+</html>
